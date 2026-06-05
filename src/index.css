@@ -74,8 +74,6 @@ body {
   background: #ffffff;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 30px 80px rgba(40, 45, 70, 0.18),
-    0 8px 24px rgba(40, 45, 70, 0.1);
   user-select: none;
 }
 
