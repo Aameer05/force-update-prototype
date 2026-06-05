@@ -1,11 +1,13 @@
-import ForceUpdateFlow from "./ForceUpdateFlow";
+import Iteration2Flow from "./Iteration2Flow";
 
 export default function App() {
   return (
     <div className="device">
-      {/* Screen 1 (Figma 91:1385) morphs into screen 2 (92:1543). Auto-plays on
-          load; click anywhere to replay/toggle. */}
-      <ForceUpdateFlow />
+      {/* Iteration 2 flow: screen 1 (frame 16) → noon morphs → 3 green pills
+          rise from behind the text, hold 2s, and absorb into the icon → loop.
+          Iteration-1 flow lives in ./ForceUpdateFlow; static screen 2 in
+          ./Iteration2Screen2. */}
+      <Iteration2Flow />
     </div>
   );
 }
