@@ -1,0 +1,491 @@
+@font-face {
+  font-family: "Noontree";
+  src: url("/fonts/Noontree-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Noontree";
+  src: url("/fonts/Noontree-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Noontree";
+  src: url("/fonts/Noontree-ExtraBold.woff2") format("woff2");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --colour-surface-primary-inverted: #101628;
+  --colour-text-primary: #1d2539;
+  --colour-text-tertiary: #666d85;
+  --colour-grey-300: #eaecf0;
+  --colour-feee00: #feee00;
+
+  --font-primary: "Noontree", "Nunito", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+  --font-sf: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+    "Helvetica Neue", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-primary);
+  background: #e9eaee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* The full app screen — the Figma frame is 375 x 812 */
+.device {
+  position: relative;
+  width: 375px;
+  height: 812px;
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(40, 45, 70, 0.18),
+    0 8px 24px rgba(40, 45, 70, 0.1);
+  user-select: none;
+}
+
+/* ================================================================== */
+/* Force-update screen — pixel-faithful to Figma 91:1385 (375 × 812)   */
+/* ================================================================== */
+
+.screen {
+  position: absolute;
+  inset: 0;
+  background: #ffffff;
+  font-family: var(--font-primary);
+  overflow: hidden;
+}
+
+/* Background glows — real exported blur/gradient vectors */
+.fades {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Surface scrim — dissolves the mockup's lower edge into a clean #f9f9fb
+   surface behind the headline. Sits above the phone, below the text. */
+.surface-scrim {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 300px;
+  bottom: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(249, 249, 251, 0) 0%,
+    rgba(249, 249, 251, 0.86) 26%,
+    #f9f9fb 40%
+  );
+}
+
+/* Phase-1 entrance group: phone + icon + badge + surface fade move in as one. */
+.mockup-group {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Light surface glow — painted above the phone, below the text content,
+   so it dissolves the phone's lower edge and sits behind the headline. */
+.fade-surface {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ---- Device status bar ---- */
+.statusbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 375px;
+  height: 45px;
+  z-index: 5;
+}
+.sb-time {
+  position: absolute;
+  left: 10px;
+  top: 11px;
+  width: 54px;
+  height: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sf);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.3px;
+  color: #202020;
+}
+.sb-battery {
+  position: absolute;
+  right: 14.34px;
+  top: 17.33px;
+  width: 24.328px;
+  height: 11.333px;
+}
+.sb-wifi {
+  position: absolute;
+  right: 43.67px;
+  top: 17.33px;
+  width: 15.333px;
+  height: 11px;
+}
+.sb-cellular {
+  position: absolute;
+  right: 64px;
+  top: 17.67px;
+  width: 17px;
+  height: 10.667px;
+}
+
+/* ---- Phone mockup card (transparent, thin border) ---- */
+.phone {
+  position: absolute;
+  left: 57px;
+  width: 260px;
+  height: 288.428px;
+  border-radius: 34px;
+  border: 0.8px solid #d0d4dd;
+  z-index: 1;
+}
+.phone-island {
+  position: absolute;
+  left: 59.84px;
+  top: 8.02px;
+  width: 112.488px;
+  height: 25.225px;
+  border-radius: 34.364px;
+  border: 0.6px solid #d0d4dd;
+}
+.phone-camera {
+  position: absolute;
+  left: 156.06px;
+  top: 17.18px;
+  width: 6.9px;
+  height: 6.9px;
+}
+.phone-time {
+  position: absolute;
+  left: 8.33px;
+  top: 11.11px;
+  width: 52px;
+  height: 19.275px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sf);
+  font-weight: 400;
+  font-size: 13.313px;
+  letter-spacing: -0.39px;
+  color: #d0d4dd;
+}
+.phone-battery {
+  position: absolute;
+  left: 212.485px;
+  top: 14.13px;
+  width: 26.675px;
+  height: 13.113px;
+}
+
+/* ---- noon app icon (yellow tile) ---- */
+.appicon {
+  position: absolute;
+  background: var(--colour-feee00);
+  border: 1.644px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0px 74.822px 20.556px 0px rgba(225, 202, 212, 0),
+    0px 47.689px 18.911px 0px rgba(225, 202, 212, 0.01),
+    0px 27.133px 16.444px 0px rgba(225, 202, 212, 0.05),
+    0px 12.333px 12.333px 0px rgba(225, 202, 212, 0.09),
+    0px 3.289px 6.578px 0px rgba(225, 202, 212, 0.1);
+}
+.appicon-mark {
+  display: block;
+}
+
+/* Morphing noon logo (screen 1 big icon ↔ screen 2 small badge) */
+.morph-noon {
+  position: absolute;
+  background: var(--colour-feee00);
+  border-style: solid;
+  border-color: #ffffff;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+.morph-noon-mark {
+  width: 87.7%;
+  height: 94.7%;
+  display: block;
+}
+
+/* Wrapper for the benefit card stack so it can pop in as one unit */
+.benefit-stack-wrap {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 60%;
+}
+
+/* Small yellow noon badge sitting just below the mockup (screen 2) */
+.noon-badge {
+  position: absolute;
+  left: calc(50% - 0.5px);
+  transform: translateX(-50%);
+  top: 417px;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--colour-feee00);
+  border: 0.444px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 3;
+}
+
+/* "Update available" badge overhanging the icon's bottom-right corner */
+.appicon-badge {
+  position: absolute;
+  left: 172px;
+  top: 183.73px;
+  width: 40px;
+  height: 40px;
+  border-radius: 11.429px;
+  background: #ffffff;
+  border: 1.429px solid #f2f2f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+/* ---- Stacked notification cards (live stage) ---- */
+.notif-stack {
+  z-index: 3;
+}
+.notif {
+  position: absolute;
+  height: 64px;
+  border-radius: 16px;
+}
+.notif-back {
+  left: 83px;
+  top: 397px;
+  width: 209px;
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(120, 130, 150, 0.12);
+}
+.notif-mid {
+  left: 69px;
+  top: 379px;
+  width: 237px;
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(120, 130, 150, 0.13);
+}
+.notif-front {
+  left: 53px;
+  top: 359px;
+  width: 268px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  background: linear-gradient(101deg, #29b657 0%, #4ace6c 100%);
+  box-shadow: 0 14px 26px rgba(45, 190, 95, 0.32);
+}
+.notif-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.notif-title {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.1px;
+}
+
+/* ---- Bottom content ---- */
+.content {
+  position: absolute;
+  left: 0;
+  width: 375px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  z-index: 4;
+}
+.content-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  text-align: center;
+}
+.title {
+  margin: 0;
+  font-family: var(--font-primary);
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 36px;
+  letter-spacing: -0.25px;
+  color: var(--colour-text-primary);
+  white-space: nowrap;
+}
+.body {
+  margin: 0;
+  width: 273px;
+  font-family: var(--font-primary);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  color: var(--colour-text-tertiary);
+}
+.buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 336px;
+}
+.btn {
+  width: 100%;
+  min-height: 48px;
+  max-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 10px;
+  font-family: var(--font-primary);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+.btn:disabled {
+  cursor: default;
+}
+.btn-primary {
+  background: var(--colour-surface-primary-inverted);
+  color: #ffffff;
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--colour-text-primary);
+  border: 1px solid var(--colour-grey-300);
+}
+.btn-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---- Version footer ---- */
+.version {
+  position: absolute;
+  left: 0;
+  bottom: 54px;
+  width: 375px;
+  text-align: center;
+  font-family: var(--font-primary);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #989fb3;
+  z-index: 4;
+}
+
+/* ---- Toast ---- */
+.toast {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 26px;
+  z-index: 20;
+  padding: 13px 18px;
+  border-radius: 12px;
+  background: rgba(16, 22, 40, 0.94);
+  color: #fff;
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: -0.1px;
+  text-align: center;
+  box-shadow: 0 14px 32px rgba(16, 22, 40, 0.28);
+}
+
+/* ---- Spinner ---- */
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spinner {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 2px solid;
+  display: inline-block;
+  animation: btn-spin 0.7s linear infinite;
+}
