@@ -78,9 +78,11 @@ const PILL_KEYS: Record<number, { y: number[]; scale: number[]; opacity: number[
 };
 const PILL_REST = { y: 150, scale: 0.8, opacity: 0 };
 
-// noon-icon "catch" pulse — peaks as each pill lands (≈0.353 / 0.660 / 0.968).
-const NOON_PULSE = [1, 1.12, 1, 1.12, 1, 1.12, 1];
-const NOON_PULSE_TIMES = [0, 0.353, 0.4, 0.66, 0.71, 0.968, 1];
+// noon-icon "catch" pulse — stays at rest, then a quick ~0.18s pop exactly as
+// each pill lands (landings at 0.353 / 0.660 / 0.968 of the sequence). Holding
+// flat between pops keeps it snappy and on-rhythm rather than a slow swell.
+const NOON_PULSE = [1, 1, 1.13, 1, 1, 1.13, 1, 1, 1.13, 1, 1];
+const NOON_PULSE_TIMES = [0, 0.327, 0.3526, 0.378, 0.635, 0.6603, 0.686, 0.943, 0.9679, 0.993, 1];
 
 export default function Iteration2Flow() {
   const instant = useInstant();
@@ -102,64 +104,62 @@ export default function Iteration2Flow() {
       <Fades />
       <StatusBar />
 
-      {/* Pills (z1) — below the mockup group, so the fade overlaps the peeking
-          ones and the absorbing one tucks behind the noon icon */}
-      {[2, 1, 0].map((order) => (
-        <BenefitPill key={order} active={step === 2} order={order} text={PILL_TEXTS[order]} />
-      ))}
-
-      {/* Phone card (z1) — BELOW the pills, so its border never crosses them */}
+      {/* Mockup group — the whole mockup (phone + pills + fade + noon + badge)
+          moves in TOGETHER on load (fade + zoom + rise), exactly like iteration
+          1. Internal z-layers keep the stroke/overlap fixes:
+          phone(1) < pills(2) < fade(3) < noon(5) < badge(6). */}
       <motion.div
-        className="phone"
-        style={{ zIndex: 1 }}
-        initial={ini({ opacity: 0, y: 10 })}
-        animate={{ opacity: 1, y: 0, top: S.phoneTop }}
-        transition={{ default: spring, opacity: ENTRANCE, y: ENTRANCE }}
+        className="mockup-group"
+        style={{ transformOrigin: "50% 36%", zIndex: 2 }}
+        initial={ini({ opacity: 0, scale: 0.92, y: 10 })}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={ENTRANCE}
       >
-        <div className="phone-island" />
-        <img className="phone-camera" src={`${A}/phone-camera.svg`} alt="" />
-        <span className="phone-time">9:41</span>
-        <img className="phone-battery" src={`${A}/phone-battery.svg`} alt="" />
-      </motion.div>
+        {/* phone card (z1) */}
+        <motion.div className="phone" style={{ zIndex: 1 }} initial={false} animate={{ top: S.phoneTop }} transition={spring}>
+          <div className="phone-island" />
+          <img className="phone-camera" src={`${A}/phone-camera.svg`} alt="" />
+          <span className="phone-time">9:41</span>
+          <img className="phone-battery" src={`${A}/phone-battery.svg`} alt="" />
+        </motion.div>
 
-      {/* surface fade (z3) — over the peeking pills, behind the headline */}
-      <FadeSurface instant={instant} />
+        {/* pills (z2) */}
+        {[2, 1, 0].map((order) => (
+          <BenefitPill key={order} active={step === 2} order={order} text={PILL_TEXTS[order]} />
+        ))}
 
-      {/* noon icon (z5) — above the pills so they tuck behind it; pulses on land */}
-      <motion.div
-        className="morph-noon"
-        style={{ boxShadow: NOON_SHADOW, zIndex: 5 }}
-        initial={ini({ opacity: 0, y: 10 })}
-        animate={{
-          opacity: 1,
-          y: 0,
-          left: S.noonLeft,
-          top: S.noonTop,
-          width: S.noonSize,
-          height: S.noonSize,
-          borderRadius: S.noonRadius,
-          borderWidth: S.noonBorder,
-          scale: step === 2 ? NOON_PULSE : 1,
-        }}
-        transition={{
-          default: spring,
-          opacity: ENTRANCE,
-          y: ENTRANCE,
-          scale: step === 2 ? { duration: PILL_SEQ_DUR, delay: PILL_START, times: NOON_PULSE_TIMES, ease: "easeOut" } : spring,
-        }}
-      >
-        <img src={`${I2}/noon.svg`} alt="noon" className="morph-noon-mark" />
-      </motion.div>
+        {/* surface fade (z3) */}
+        <FadeSurface />
 
-      {/* refresh badge (z6) — only on screen 1 */}
-      <motion.div
-        className="appicon-badge"
-        style={{ left: 229, top: 335, zIndex: 6 }}
-        initial={ini({ opacity: 0 })}
-        animate={{ opacity: S.blue, scale: S.blue ? 1 : 0.6 }}
-        transition={{ duration: 0.3 }}
-      >
-        <img src={`${A}/refresh.svg`} alt="" style={{ width: 24, height: 24 }} />
+        {/* noon icon (z5) — pulses as each pill lands */}
+        <motion.div
+          className="morph-noon"
+          style={{ boxShadow: NOON_SHADOW, zIndex: 5 }}
+          initial={false}
+          animate={{
+            left: S.noonLeft,
+            top: S.noonTop,
+            width: S.noonSize,
+            height: S.noonSize,
+            borderRadius: S.noonRadius,
+            borderWidth: S.noonBorder,
+            scale: step === 2 ? NOON_PULSE : 1,
+          }}
+          transition={{ ...spring, scale: step === 2 ? { duration: PILL_SEQ_DUR, delay: PILL_START, times: NOON_PULSE_TIMES, ease: "easeOut" } : spring }}
+        >
+          <img src={`${I2}/noon.svg`} alt="noon" className="morph-noon-mark" />
+        </motion.div>
+
+        {/* refresh badge (z6) — only on screen 1 */}
+        <motion.div
+          className="appicon-badge"
+          style={{ left: 229, top: 335, zIndex: 6 }}
+          initial={false}
+          animate={{ opacity: S.blue, scale: S.blue ? 1 : 0.6 }}
+          transition={{ duration: 0.3 }}
+        >
+          <img src={`${A}/refresh.svg`} alt="" style={{ width: 24, height: 24 }} />
+        </motion.div>
       </motion.div>
 
       {/* Headline + CTAs — slide up ONCE on load, then never move */}
@@ -230,19 +230,16 @@ function BagFilled({ size }: { size: number }) {
 /* Shared chrome                                                       */
 /* ------------------------------------------------------------------ */
 
-function FadeSurface({ instant }: { instant: boolean }) {
+function FadeSurface() {
   // Strong, readable surface fade (z3): transparent above the front pill,
   // ramping to solid #f9f9fb by the headline — dissolves the phone's lower edge
   // and the peeking pills, and reads clearly behind the text. Fades in with the
-  // mockup on load.
+  // mockup group on load (no own entrance).
   return (
-    <motion.div
+    <div
       className="surface-scrim"
       aria-hidden
       style={{ top: 415, zIndex: 3, background: "linear-gradient(180deg, rgba(249,249,251,0) 0%, rgba(249,249,251,0.92) 11%, #f9f9fb 18%)" }}
-      initial={instant ? false : { opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={ENTRANCE}
     />
   );
 }
