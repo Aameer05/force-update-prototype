@@ -455,6 +455,265 @@ body {
   z-index: 4;
 }
 
+/* ================================================================== */
+/* Iteration switcher — toggle between iterations 1/2/3 (#gallery)      */
+/* ================================================================== */
+.switcher {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  padding: 28px;
+  box-sizing: border-box;
+  max-height: 100vh;
+}
+/* Segmented control */
+.seg {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  background: #eceef2;
+  border-radius: 12px;
+}
+.seg-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  padding: 9px 20px;
+  border-radius: 9px;
+  font-family: var(--font-primary);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.1px;
+  color: var(--colour-text-tertiary);
+  cursor: pointer;
+  transition: color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+.seg-btn:hover {
+  color: var(--colour-text-primary);
+}
+.seg-btn.is-active {
+  background: var(--colour-surface-primary-inverted);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(16, 22, 40, 0.18);
+}
+/* Slot sized to the scaled device (size + scale set inline, responsive to the
+   viewport). flex-shrink:0 so the column never crushes/clips it. */
+.switcher-slot {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: 0 22px 60px rgba(29, 37, 57, 0.16);
+  flex-shrink: 0;
+}
+.switcher-sub {
+  font-family: var(--font-sf);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: 0.2px;
+  color: #989fb3;
+}
+
+/* ================================================================== */
+/* Iteration 3 — Figma 161:1543 (ripple bg + image-based phone mockup) */
+/* ================================================================== */
+
+/* Concentric ripple rings behind the mockup */
+.i3-rings {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Expanding ripple wave — replays on each icon change, travels off-screen */
+.i3-ripple {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* Phone mockup — 260 × 375 card, centered, top 134, clips its contents.
+   Centered via `left` (not translateX) because Framer Motion owns `transform`
+   on this animated element and would otherwise clobber the centering. */
+.i3-mockup {
+  position: absolute;
+  left: 57px;
+  top: 134px;
+  width: 260px;
+  height: 375px;
+  overflow: hidden;
+  z-index: 1;
+  pointer-events: none;
+}
+.i3-card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 260px;
+  height: 324.428px;
+  display: block;
+}
+
+/* In-phone status bar (faint grey) */
+.i3-phone-time {
+  position: absolute;
+  left: 8.35px;
+  top: 11.1px;
+  width: 52px;
+  height: 19.275px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sf);
+  font-weight: 400;
+  font-size: 13.313px;
+  letter-spacing: -0.39px;
+  color: #d0d4dd;
+}
+.i3-phone-signal {
+  position: absolute;
+  left: 156.05px;
+  top: 17.18px;
+  width: 6.9px;
+  height: 6.9px;
+}
+.i3-phone-battery {
+  position: absolute;
+  left: 212.48px;
+  top: 14.12px;
+  width: 26.675px;
+  height: 13.113px;
+}
+.i3-phone-island {
+  position: absolute;
+  left: 59.84px;
+  top: 8.02px;
+  width: 112.488px;
+  height: 25.225px;
+  border-radius: 34.364px;
+  border: 0.6px solid #d0d4dd;
+}
+
+/* Yellow noon app icon — centered via `left` (Framer owns `transform`) */
+.i3-appicon {
+  position: absolute;
+  left: 68px;
+  top: 78px;
+  width: 124px;
+  height: 124px;
+  border-radius: 24.8px;
+  background: var(--colour-feee00);
+  border: 1.378px solid #ffffff;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.i3-appicon-mark {
+  width: 108.759px;
+  height: 117.46px;
+  display: block;
+}
+
+/* Refresh badge at the icon's bottom-right corner */
+.i3-refresh {
+  position: absolute;
+  left: 166px;
+  top: 176px;
+  width: 36px;
+  height: 36px;
+  border-radius: 7.8px;
+  background: #ffffff;
+  border: 1.286px solid #f2f2f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.i3-refresh-icon {
+  position: relative;
+  width: 27px;
+  height: 27px;
+}
+.i3-refresh-icon img {
+  position: absolute;
+  inset: 10.42%;
+  width: 79.16%;
+  height: 79.17%;
+  display: block;
+}
+
+/* ---- Screen 2 icon zone: benefit shield + check badge + caption ---- */
+
+/* Orange gradient shield (centered via `left`; Framer owns `transform`) */
+.i3-shield {
+  position: absolute;
+  left: 74px;
+  top: 78.73px;
+  width: 112.013px;
+  height: 130px;
+}
+.i3-shield-glow {
+  position: absolute;
+  inset: -22.64% -32.12% -32.7% -32.12%;
+}
+.i3-shield-glow img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+}
+
+/* Check-circle badge at the shield's bottom-right */
+.i3-check {
+  position: absolute;
+  left: 152px;
+  top: 167px;
+  padding: 4px;
+  border-radius: 9999px;
+  background: #ffffff;
+  border: 1px solid #eaecf0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.i3-check img {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+/* Orange benefit caption under the shield (centered via `left`). Wider than
+   the Figma 120px box so longer rotating taglines read on ~2 lines. */
+.i3-benefit-caption {
+  position: absolute;
+  left: 30px;
+  top: 225px;
+  width: 200px;
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-primary);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  color: #e5641a;
+}
+
+/* Surface wash that dissolves the card's lower edge into #F9F9FB */
+.i3-surface {
+  position: absolute;
+  left: calc(50% - 20px);
+  transform: translateX(-50%);
+  top: 382px;
+  width: 519px;
+  height: 424px;
+  z-index: 2;
+  pointer-events: none;
+}
+
 /* ---- Toast ---- */
 .toast {
   position: absolute;
