@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Iteration3Flow from "./Iteration3Flow";
+import Iteration4Flow from "./Iteration4Flow";
 import Gallery from "./Gallery";
 
 /** Tiny hash router so the gallery is reachable without changing the default. */
@@ -23,11 +23,11 @@ export default function App() {
     return <Gallery />;
   }
 
-  // Default: iteration 3 standalone (keeps per-iteration deploys unchanged).
-  // Iteration-2 flow lives in ./Iteration2Flow; iteration-1 in ./ForceUpdateFlow.
+  // Default: iteration 4 standalone (keeps per-iteration deploys unchanged).
+  // Earlier flows live in ./Iteration3Flow, ./Iteration2Flow, ./ForceUpdateFlow.
   return (
     <div className="device">
-      <Iteration3Flow />
+      <Iteration4Flow />
     </div>
   );
 }

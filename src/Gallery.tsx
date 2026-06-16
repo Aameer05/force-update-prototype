@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ForceUpdateFlow from "./ForceUpdateFlow";
 import Iteration2Flow from "./Iteration2Flow";
 import Iteration3Flow from "./Iteration3Flow";
+import Iteration4Flow from "./Iteration4Flow";
 
 /**
  * Iteration switcher — one device frame with a segmented toggle to flip between
@@ -14,6 +15,7 @@ const ITEMS: Array<{ label: string; sub: string; Flow: () => JSX.Element }> = [
   { label: "Iteration 1", sub: "main", Flow: ForceUpdateFlow },
   { label: "Iteration 2", sub: "iteration-2", Flow: Iteration2Flow },
   { label: "Iteration 3", sub: "iteration-3", Flow: Iteration3Flow },
+  { label: "Iteration 4", sub: "iteration-4", Flow: Iteration4Flow },
 ];
 
 const DEVICE_W = 375;
@@ -30,7 +32,7 @@ function fitScale() {
 }
 
 export default function Gallery() {
-  const [sel, setSel] = useState(2); // default to the latest iteration
+  const [sel, setSel] = useState(ITEMS.length - 1); // default to the latest iteration
   const [scale, setScale] = useState(fitScale);
 
   useEffect(() => {

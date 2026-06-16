@@ -515,6 +515,65 @@ body {
 }
 
 /* ================================================================== */
+/* Iteration 4 — benefit notification pill (Figma 198:1762)            */
+/* ================================================================== */
+/* Stack pills — absolutely positioned, horizontally centred via left/right +
+   margin:auto (Framer owns the transform, so no translate is used). Their top
+   is anchored so the resting centre sits over the mockup's lower edge; Framer's
+   `y` offsets each pill within the stack. */
+.i4-notif {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  width: max-content;
+  top: 360px;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px 8px 8px;
+  background: #ffffff;
+  border: 2px solid #efefef;
+  border-radius: 8px;
+  box-shadow: 0px 95px 13.5px rgba(138, 138, 138, 0),
+    0px 61px 12px rgba(138, 138, 138, 0.01),
+    0px 34px 10.5px rgba(138, 138, 138, 0.05),
+    0px 15px 7.5px rgba(138, 138, 138, 0.09),
+    0px 4px 4px rgba(138, 138, 138, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.i4-notif-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.i4-notif-icon {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  display: block;
+}
+.i4-notif-icon img {
+  position: absolute;
+  left: 15.66%;
+  top: 10.55%;
+  width: 79.13%;
+  height: 84.24%;
+  display: block;
+}
+.i4-notif-text {
+  font-family: var(--font-primary);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 18px;
+  letter-spacing: -0.1px;
+  color: #12a168;
+  white-space: nowrap;
+}
+
+/* ================================================================== */
 /* Iteration 3 — Figma 161:1543 (ripple bg + image-based phone mockup) */
 /* ================================================================== */
 
