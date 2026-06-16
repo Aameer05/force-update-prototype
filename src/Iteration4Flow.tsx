@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
 
 /**
  * Iteration 4 — noon icon ↔ benefit notification.
@@ -29,15 +29,15 @@ const MORPH = { duration: 0.5, ease: EASE } as const; // refresh badge fade
 // Pill "pops out" of the noon icon: a springy drop-in that overshoots and
 // settles (the bounce on landing). Exit retracts quickly back toward the icon.
 const NOTIF_IN = {
-  default: { type: "spring", bounce: 0.5, duration: 0.72 },
-  opacity: { duration: 0.28, ease: "easeOut" },
+  default: { type: "spring", bounce: 0.3, duration: 0.62 },
+  opacity: { duration: 0.24, ease: "easeOut" },
 } as const;
-// Retract: pills travel up into the noon icon, shrinking + fading (accelerating
-// ease-in, as if absorbed). Staggered per depth so the rest follow the front.
-const NOTIF_OUT = { duration: 0.46, ease: [0.4, 0, 1, 1] } as const;
+// Retract: pills travel up into the noon icon, shrinking + fading (strong
+// accelerating ease-in, as if absorbed). Staggered per depth so the rest follow.
+const NOTIF_OUT = { duration: 0.42, ease: [0.55, 0, 1, 1] } as const;
 
 const NOON_SHADOW =
-  "0px 62.689px 17.222px 0px rgba(225,202,212,0), 0px 39.956px 15.844px 0px rgba(225,202,212,0.01), 0px 22.733px 13.778px 0px rgba(225,202,212,0.05), 0px 10.333px 10.333px 0px rgba(225,202,212,0.09), 0px 2.756px 5.511px 0px rgba(225,202,212,0.1), 0px 3.631px 29.045px 0px rgba(0,0,0,0.04)";
+  "0px 68.756px 18.889px 0px rgba(225,202,212,0), 0px 43.822px 17.378px 0px rgba(225,202,212,0.01), 0px 24.933px 15.111px 0px rgba(225,202,212,0.05), 0px 11.333px 11.333px 0px rgba(225,202,212,0.09), 0px 3.022px 6.044px 0px rgba(225,202,212,0.1), 0px 7.556px 34px 0px rgba(0,0,0,0.08)";
 
 // Concentric ripple rings — [name, left, top, width, height, inset%] from Figma.
 const RINGS: Array<[string, number, number, number, number, number]> = [
@@ -54,15 +54,15 @@ const RINGS: Array<[string, number, number, number, number, number]> = [
 const PILL_TEXT = "Faster, smoother check out";
 const MAX_PILLS = 3;
 const STATES = 1 + MAX_PILLS; // 0 = noon, 1/2/3 = 1–3 stacked pills
-const HOLD = [2400, 1600, 1600, 2000]; // dwell per state (ms); 3-stack holds ~2s
+const HOLD = [2200, 1500, 1500, 2000]; // dwell per state (ms); 3-stack holds ~2s
 
 // Per-depth resting style in the stack (0 = front/newest). The front pill is
 // content-sized (largest); demoted cards take fixed widths so they're clearly
 // smaller, and sit higher + fainter so they peek above it (Figma 198:1844).
-const DEPTH: Array<{ y: number; w: number | null; h: number | null; bg: string; bw: number }> = [
-  { y: 0, w: null, h: null, bg: "#ffffff", bw: 2 }, // front: content-sized, tallest
-  { y: -14, w: 171, h: 34, bg: "#fcfcfc", bw: 1.5 }, // y365
-  { y: -22, w: 147, h: 34, bg: "rgba(255,255,255,0.7)", bw: 1 }, // y357
+const DEPTH: Array<{ y: number; w: number | null; h: number | null; bg: string; bw: number; r: number; op: number }> = [
+  { y: 0, w: null, h: null, bg: "#ffffff", bw: 1.5, r: 12, op: 1 }, // front: full, focus
+  { y: -14, w: 171, h: 34, bg: "#fcfcfc", bw: 1.5, r: 10, op: 0.7 }, // y365, faded back
+  { y: -22, w: 147, h: 34, bg: "#fcfcfc", bw: 1, r: 10, op: 0.45 }, // y357, fainter
 ];
 
 function useInstant() {
@@ -79,11 +79,33 @@ export default function Iteration4Flow() {
   const ini = (v: Record<string, number>) => (instant ? false : v);
   const [idx, setIdx] = useState(0); // 0 = noon, 1 = one pill, 2 = stacked
 
+  // Noon icon reacts (a few subtle bumps) as the pills retract into it.
+  const iconControls = useAnimationControls();
+  const prevIdxRef = useRef(0);
+
   // Auto-cycle: noon → 1 pill → 2 stacked → loop.
   useEffect(() => {
     if (instant) return;
     const t = window.setTimeout(() => setIdx((i) => (i + 1) % STATES), HOLD[idx]);
     return () => window.clearTimeout(t);
+  }, [idx, instant]);
+
+  // On the return to noon, the pills fly up into the icon — give it a little
+  // reaction timed to the absorption (delayed to meet the rising pills).
+  useEffect(() => {
+    const prev = prevIdxRef.current;
+    prevIdxRef.current = idx;
+    if (instant || !(idx === 0 && prev > 0)) return;
+    iconControls.start({
+      scale: [1, 1.06, 0.99, 1.05, 0.99, 1.04, 1],
+      transition: {
+        duration: 0.62,
+        delay: 0.32,
+        times: [0, 0.14, 0.28, 0.5, 0.62, 0.82, 1],
+        ease: "easeOut",
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idx, instant]);
 
   const isNoon = idx === 0;
@@ -109,35 +131,15 @@ export default function Iteration4Flow() {
 
       <StatusBar />
 
-      {/* Phone mockup group (z1) — zooms + fades in as one unit.
-          Iteration 4 (Figma 198:1925) raises the mockup from top 134 → 111. */}
+      {/* Phone mockup (z1) — clean white card + grey notch (Figma 296:1680).
+          Zooms + fades in as one unit. */}
       <motion.div
-        className="i3-mockup"
-        style={{ transformOrigin: "50% 32%", top: 111 }}
+        className="i4-mock"
         initial={ini({ opacity: 0, scale: 0.92, y: 10 })}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}
       >
-        {/* white phone card */}
-        <img className="i3-card" src={`${I3}/mockup-bg.svg`} alt="" />
-
-        {/* in-phone status bar */}
-        <span className="i3-phone-time">9:41</span>
-        <img className="i3-phone-signal" src={`${I3}/phone-signal.svg`} alt="" />
-        <img className="i3-phone-battery" src={`${I3}/phone-battery.svg`} alt="" />
-        <div className="i3-phone-island" />
-
-        {/* noon app icon — static across both states (no morph) */}
-        <div className="i3-appicon" style={{ boxShadow: NOON_SHADOW }}>
-          <img className="i3-appicon-mark" src={`${I3}/noon.svg`} alt="noon" />
-        </div>
-
-        {/* refresh badge — noon state only; fades out for the notification */}
-        <motion.div className="i3-refresh" initial={false} animate={{ opacity: isNoon ? 1 : 0, scale: isNoon ? 1 : 0.8 }} transition={MORPH}>
-          <div className="i3-refresh-icon">
-            <img src={`${I3}/refresh.svg`} alt="" />
-          </div>
-        </motion.div>
+        <div className="i4-notch" />
       </motion.div>
 
       {/* Surface wash (z2) — dissolves the card's lower edge into #F9F9FB */}
@@ -165,20 +167,21 @@ export default function Iteration4Flow() {
               className="i4-notif"
               aria-hidden
               style={{ transformOrigin: "center top", zIndex: 7 - depth }}
-              initial={{ opacity: 0, y: -64, scale: 0.5, backgroundColor: "#ffffff", borderWidth: 2 }}
+              initial={{ opacity: 0, y: -64, scale: 0.5, backgroundColor: "#ffffff", borderWidth: 1.5, borderRadius: 12 }}
               animate={{
-                opacity: 1,
+                opacity: d.op,
                 y: restY,
                 scale: 1,
                 backgroundColor: d.bg,
                 borderWidth: d.bw,
+                borderRadius: d.r,
                 ...size,
               }}
               exit={{
                 opacity: 0,
-                y: -100,
-                scale: 0.32,
-                transition: { ...NOTIF_OUT, delay: depth * 0.09 },
+                y: -130, // up into the noon icon's centre
+                scale: 0.14, // shrink to nothing as it tucks behind the logo
+                transition: { ...NOTIF_OUT, delay: depth * 0.2 }, // one-by-one
               }}
               transition={NOTIF_IN}
             >
@@ -197,6 +200,34 @@ export default function Iteration4Flow() {
           );
         })}
       </AnimatePresence>
+
+      {/* noon icon + refresh badge (z8) — lifted ABOVE the pills (same box +
+          entrance as the mockup) so the pills retract UP behind the logo. The
+          icon doesn't overlap the resting pills, so order only matters mid-flight. */}
+      <motion.div
+        className="i4-iconlayer"
+        style={{ transformOrigin: "50% 32%" }}
+        initial={ini({ opacity: 0, scale: 0.92, y: 10 })}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}
+      >
+        <motion.div className="i4-appicon" style={{ boxShadow: NOON_SHADOW, transformOrigin: "center" }} initial={{ scale: 1 }} animate={iconControls}>
+          <img className="i4-appicon-mark" src={`${I4}/noon.svg`} alt="noon" />
+        </motion.div>
+        {/* Refresh badge — hidden while pills exist. On the return to noon it
+            waits for the pills to finish retracting before fading back in, so
+            it never shows mid-flight. */}
+        <motion.div
+          className="i4-refresh"
+          initial={false}
+          animate={{ opacity: isNoon ? 1 : 0, scale: isNoon ? 1 : 0.8 }}
+          transition={isNoon ? { ...MORPH, delay: 0.9 } : MORPH}
+        >
+          <div className="i4-refresh-icon">
+            <img src={`${I4}/refresh.svg`} alt="" />
+          </div>
+        </motion.div>
+      </motion.div>
 
       {/* Headline + CTAs (z4) — slide up once on load */}
       <div className="content" style={{ top: 473, zIndex: 4 }}>

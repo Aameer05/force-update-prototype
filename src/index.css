@@ -517,6 +517,19 @@ body {
 /* ================================================================== */
 /* Iteration 4 — benefit notification pill (Figma 198:1762)            */
 /* ================================================================== */
+/* noon icon layer — mirrors the mockup box (left 57, top 111, 260×375) but
+   sits above the pills (z8) and never clips, so retracting pills tuck behind
+   the logo. The icon/refresh keep their mockup-relative positions. */
+.i4-iconlayer {
+  position: absolute;
+  left: 57px;
+  top: 111px;
+  width: 260px;
+  height: 378px;
+  z-index: 8;
+  pointer-events: none;
+}
+
 /* Stack pills — absolutely positioned, horizontally centred via left/right +
    margin:auto (Framer owns the transform, so no translate is used). Their top
    is anchored so the resting centre sits over the mockup's lower edge; Framer's
@@ -531,17 +544,15 @@ body {
   top: 360px;
   display: flex;
   align-items: center;
-  padding: 8px 12px 8px 8px;
+  padding: 10px 12px 10px 8px;
   background: #ffffff;
-  border: 2px solid #efefef;
-  border-radius: 8px;
-  box-shadow: 0px 95px 13.5px rgba(138, 138, 138, 0),
-    0px 61px 12px rgba(138, 138, 138, 0.01),
-    0px 34px 10.5px rgba(138, 138, 138, 0.05),
-    0px 15px 7.5px rgba(138, 138, 138, 0.09),
-    0px 4px 4px rgba(138, 138, 138, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid #efefef;
+  border-radius: 12px;
+  box-shadow: 0px 45px 13.5px rgba(138, 138, 138, 0),
+    0px 30px 12px rgba(138, 138, 138, 0.01),
+    0px 24px 10.5px rgba(138, 138, 138, 0.02),
+    0px 15px 7.5px rgba(138, 138, 138, 0.02),
+    0px 4px 4px rgba(138, 138, 138, 0.02);
 }
 .i4-notif-content {
   display: flex;
@@ -550,8 +561,8 @@ body {
 }
 .i4-notif-icon {
   position: relative;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
   display: block;
 }
@@ -566,11 +577,84 @@ body {
 .i4-notif-text {
   font-family: var(--font-primary);
   font-weight: 600;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 18px;
   letter-spacing: -0.1px;
   color: #12a168;
   white-space: nowrap;
+}
+
+/* Iteration 4 mockup (Figma 296:1680) — clean white card, thick light border,
+   top-rounded, soft top shadow; grey notch pill; bigger noon icon. */
+.i4-mock {
+  position: absolute;
+  left: 57px;
+  top: 111px;
+  width: 260px;
+  height: 378px;
+  background: #ffffff;
+  border: 6px solid #f7f8fc;
+  border-radius: 40px 40px 0 0;
+  box-shadow: 0px -20px 40px 0px rgba(16, 22, 40, 0.03);
+  transform-origin: 50% 32%;
+  z-index: 1;
+}
+.i4-notch {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 15px;
+  width: 86px;
+  height: 25px;
+  border-radius: 34.364px;
+  background: #f2f3f7;
+}
+/* Bigger noon app icon (136) — sits in the z8 icon layer (mockup-relative) */
+.i4-appicon {
+  position: absolute;
+  left: 62px;
+  top: 73.73px;
+  width: 136px;
+  height: 136px;
+  border-radius: 27.2px;
+  background: var(--colour-feee00);
+  border: 4px solid #ffffff;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.i4-appicon-mark {
+  width: 107.407px;
+  height: 116px;
+  display: block;
+}
+/* Refresh badge — bottom-right of the icon */
+.i4-refresh {
+  position: absolute;
+  left: 170px;
+  top: 177px;
+  width: 40px;
+  height: 40px;
+  border-radius: 11.429px;
+  background: #ffffff;
+  border: 1.429px solid #f2f2f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+}
+.i4-refresh-icon {
+  position: relative;
+  width: 30px;
+  height: 30px;
+}
+.i4-refresh-icon img {
+  position: absolute;
+  inset: 10.42%;
+  width: 79.16%;
+  height: 79.16%;
+  display: block;
 }
 
 /* ================================================================== */
